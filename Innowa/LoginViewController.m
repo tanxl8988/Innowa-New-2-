@@ -62,6 +62,10 @@
         self.rememberBt.selected = YES;
     }
     
+    self.privacyTextView.backgroundColor = [UIColor whiteColor];
+    self.emailF.textColor = [UIColor blackColor];
+    self.passwordF.textColor = [UIColor blackColor];
+
     // Do any additional setup after loading the view.
 }
 
@@ -115,10 +119,10 @@
 //        }
 //    }];
     
-//    if ([self.emailF.text isEqualToString:@""] || [self.passwordF.text isEqualToString:@""]) {
-//        [APKAlertTool showAlertInViewController:self title:nil message:NSLocalizedString(@"登陆失败", nil) handler:nil];
-//        return;
-//    }
+    if ([self.emailF.text isEqualToString:@""] || [self.passwordF.text isEqualToString:@""]) {
+        [APKAlertTool showAlertInViewController:self title:nil message:NSLocalizedString(@"登陆失败", nil) handler:nil];
+        return;
+    }
     
     self.numOfLoginTime++;
     
@@ -147,21 +151,26 @@
         //8.解析数据
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
         NSLog(@"%@",dict);
-        if (dict != nil && [dict[@"status"]isEqualToString:@"Success"]){
-            
-//            [APKAlertTool showAlertInViewController:self message:NSLocalizedString(@"登陆成功",nil)];
-//            [APKAlertTool showAlertInViewController:self title:nil message:NSLocalizedString(@"登陆成功",nil) handler:^(UIAlertAction *action) {
-//
-//
-//            }];
-            [self performSegueWithIdentifier:@"loginSegue" sender:nil];
-        }
-        else{
-            if (self.numOfLoginTime < 3) {//尝试2次连续登陆
-                [self signInAction:sender];
-            }else
-                [APKAlertTool showAlertInViewController:self title:nil message:NSLocalizedString(@"登陆失败", nil) handler:nil];
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            if (dict != nil && [dict[@"status"]isEqualToString:@"Success"]){
+                
+    //            [APKAlertTool showAlertInViewController:self message:NSLocalizedString(@"登陆成功",nil)];
+    //            [APKAlertTool showAlertInViewController:self title:nil message:NSLocalizedString(@"登陆成功",nil) handler:^(UIAlertAction *action) {
+    //
+    //
+    //            }];
+                [self performSegueWithIdentifier:@"loginSegue" sender:nil];
+            }
+            else{
+                
+                    if (self.numOfLoginTime < 3) {//尝试2次连续登陆
+                        [self signInAction:sender];
+                    }else
+                        [APKAlertTool showAlertInViewController:self title:nil message:NSLocalizedString(@"登陆失败", nil) handler:nil];
+            }
+        });
+
 
     }];
 
